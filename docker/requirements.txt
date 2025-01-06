@@ -1,0 +1,3 @@
+junity==0.7.8 # this is the unity catalog sidebar extension
+dunky[delta]==0.2.0 # this is duckdb unity kernel
+unitycatalog-client==0.2.1

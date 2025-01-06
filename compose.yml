@@ -1,0 +1,52 @@
+services:
+  uc:
+    build:
+      dockerfile: docker/Dockerfile.uc
+    ports:
+      - 8080:8080
+    volumes:
+      - uc:/app/unitycatalog/
+  jupyter:
+    user: root
+    build:
+      dockerfile: docker/Dockerfile.jupyter
+    environment:
+      JUPYTER_TOKEN: ducklake
+      HOME: /home/ducklake
+      NB_USER: ducklake
+      NB_UID: 1008
+      NB_GID: 1011
+      CHOWN_HOME: 'yes'
+      CHOWN_HOME_OPTS: -R
+      GRANT_SUDO: yes
+      LOCATION_PREFIX: /home/ducklake/data
+      UC_TOKEN: 'not-used'
+      UC_ENDPOINT: 'http://uc:8080'
+      UC_AWS_REGION: 'eu-west-1'
+      JY_HOST_URL: http://localhost:8081
+      JY_DOCKER_HOST: http://uc:8080
+    ports:
+      - 8888:8888
+    depends_on:
+      - uc
+    volumes:
+      - uc:/app/unitycatalog/
+  idp:
+    build:
+      dockerfile: docker/Dockerfile.idp
+    ports:
+      - 8181:8181
+    depends_on:
+      - uc
+  nginx: # (reverse proxy) Enables service on localhost running outside docker compose network to access UC Catalog API
+    build:
+      dockerfile: docker/Dockerfile.nginx
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    depends_on:
+      - uc
+      - idp
+volumes:
+  uc:

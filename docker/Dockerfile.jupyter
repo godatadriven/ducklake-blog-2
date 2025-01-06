@@ -1,0 +1,25 @@
+# x86-64 is required for duckdb uc_catalog extension
+FROM quay.io/jupyter/minimal-notebook:x86_64-python-3.11
+
+# Add the nginx certificate for the pseudo identity provider to the truststore
+COPY docker/certs /usr/local/share/ca-certificates
+
+
+COPY docker/certs /usr/local/share/ca-certificates
+USER root
+RUN cat /usr/local/share/ca-certificates/certificate.crt >> /etc/ssl/certs/ca-certificates.crt && \
+    update-ca-certificates
+
+# Install notebook dependencies
+COPY docker/requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN chmod 664  /etc/ssl/certs/ca-certificates.crt
+# Copy example files
+COPY ./example ${HOME}/example
+
+WORKDIR ${HOME}
+
+EXPOSE 8888
+
+CMD ["jupyter", "lab"]

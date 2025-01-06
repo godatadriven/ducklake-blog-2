@@ -1,0 +1,27 @@
+# Use the official Golang image as the base image
+FROM golang:1.20-alpine
+
+# Install Node.js, npm, and Angular CLI
+RUN apk add --no-cache nodejs npm git
+RUN npm install -g @angular/cli
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the rest of the application code
+RUN git clone https://github.com/dan1elt0m/pseudo-identity-provider.git .
+
+ENV PORT=8181
+
+WORKDIR /app/frontend
+RUN npm install
+RUN ng build
+
+WORKDIR /app/src
+
+# Expose the port the application runs on
+EXPOSE 8181
+EXPOSE 443
+
+# Command to run the application
+CMD ["go", "run", "./standalone/standalone_main.go"]

@@ -1,0 +1,12 @@
+FROM nginx:alpine
+
+WORKDIR /etc/nginx
+COPY docker/conf/nginx.conf ./conf.d/default.conf
+COPY docker/certs /usr/local/share/ca-certificates
+
+RUN apk add --no-cache ca-certificates && \
+    cat /usr/local/share/ca-certificates/certificate.crt >> /etc/ssl/certs/ca-certificates.crt && \
+    update-ca-certificates
+EXPOSE 80
+ENTRYPOINT [ "nginx" ]
+CMD [ "-g", "daemon off;" ]
