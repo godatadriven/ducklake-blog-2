@@ -4,6 +4,7 @@ services:
       dockerfile: docker/Dockerfile.uc
     ports:
       - 8080:8080
+      - 33865:33865
     volumes:
       - uc:/app/unitycatalog/
   jupyter:

@@ -19,6 +19,10 @@ RUN addgroup -g 1011 sharedgroup && \
 # Change ownership of the directory to sharedgroup
 RUN chown -R :sharedgroup /app/unitycatalog
 
+# Prevents auth from crashing when trying to open a browser
+COPY docker/mock_open.sh /usr/bin/open
+RUN chmod +x /usr/bin/open
+
 # Listen to port 8080
 EXPOSE 8080
 
